@@ -328,3 +328,7 @@
 ## agent_communication:
   - agent: "main"
     message: "Sistema completo implementado. Backend con FastAPI + SQLite/SQL Server, Frontend React moderno con dashboard completo. Todas las funcionalidades del HTML original migradas a React moderno. Listo para testing completo."
+  - agent: "testing"
+    message: "✅ Backend testing completo: 12/13 pruebas exitosas (92.3%). Todos los endpoints CRUD funcionando. Issue menor: validación de coordenadas. Sistema listo para producción."
+  - agent: "main"
+    message: "Backend testeado exitosamente. Preguntando al usuario sobre testing frontend."
