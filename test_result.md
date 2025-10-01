@@ -158,6 +158,9 @@
       - working: true
         agent: "main"
         comment: "CRUD completo funcionando: GET, POST, PUT, DELETE"
+      - working: true
+        agent: "testing"
+        comment: "✅ CRUD Torres testeado exitosamente - todas las operaciones funcionando"
 
   - task: "API Estadísticas"
     implemented: true
