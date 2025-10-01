@@ -180,11 +180,14 @@
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "Rutas implementadas, necesita testing completo"
+      - working: true
+        agent: "testing"
+        comment: "✅ APIs de mantenimientos y técnicos testeadas exitosamente"
 
   - task: "Base de datos con datos de ejemplo"
     implemented: true
