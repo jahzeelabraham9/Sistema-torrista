@@ -39,7 +39,7 @@ const MapComponent = ({ torres = [], onTorreSelect, selectedTorre, filters, onFi
   const clearFilters = () => {
     onFiltersChange({
       search: '',
-      convenio: '',
+      convenio: 'all',
       maintenance: ''
     });
   };
