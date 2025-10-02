@@ -31,7 +31,7 @@ const Dashboard = () => {
   // Estados de filtros del mapa
   const [mapFilters, setMapFilters] = useState({
     search: '',
-    convenio: '',
+    convenio: 'all',
     maintenance: ''
   });
 
