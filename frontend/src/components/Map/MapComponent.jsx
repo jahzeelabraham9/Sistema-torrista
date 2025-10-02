@@ -96,7 +96,7 @@ const MapComponent = ({ torres = [], onTorreSelect, selectedTorre, filters, onFi
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Tipo de Convenio
               </label>
-              <Select value={filters.convenio} onValueChange={(value) => onFiltersChange({...filters, convenio: value})}>
+              <Select value={filters.convenio || 'all'} onValueChange={(value) => onFiltersChange({...filters, convenio: value})}>
                 <SelectTrigger>
                   <SelectValue placeholder="Todos los convenios" />
                 </SelectTrigger>
