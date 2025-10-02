@@ -101,7 +101,7 @@ const MapComponent = ({ torres = [], onTorreSelect, selectedTorre, filters, onFi
                   <SelectValue placeholder="Todos los convenios" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todos</SelectItem>
+                  <SelectItem value="all">Todos</SelectItem>
                   <SelectItem value="Policia">Policía</SelectItem>
                   <SelectItem value="Ecom">ECOM</SelectItem>
                   <SelectItem value="De tercero">De Tercero</SelectItem>
