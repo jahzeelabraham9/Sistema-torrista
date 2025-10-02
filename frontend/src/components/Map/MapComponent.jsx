@@ -31,7 +31,7 @@ const MapComponent = ({ torres = [], onTorreSelect, selectedTorre, filters, onFi
       torre.direccion?.toLowerCase().includes(filters.search.toLowerCase()) ||
       torre.id?.toString().includes(filters.search);
     
-    const convenioMatch = !filters.convenio || torre.tipo_convenio === filters.convenio;
+    const convenioMatch = !filters.convenio || filters.convenio === 'all' || torre.tipo_convenio === filters.convenio;
     
     return searchMatch && convenioMatch;
   });
