@@ -86,15 +86,30 @@
   animation: fadeIn 0.3s ease-out;
 }
 
-/* Estilos para el mapa simulado */
-.map-marker {
-  transition: all 0.2s ease;
-  cursor: pointer;
+/* Estilos para Leaflet */
+.leaflet-container {
+  font-family: 'Inter', 'Segoe UI', sans-serif;
 }
 
-.map-marker:hover {
-  transform: scale(1.2);
-  z-index: 10;
+.leaflet-popup-content-wrapper {
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.leaflet-popup-tip {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.custom-div-icon {
+  background: transparent;
+  border: none;
+}
+
+/* Hover effects para marcadores */
+.leaflet-marker-icon:hover {
+  filter: brightness(1.2);
+  transform: scale(1.1);
+  transition: all 0.2s ease;
 }
 
 /* Scrollbar personalizado */
