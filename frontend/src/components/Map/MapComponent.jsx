@@ -65,26 +65,24 @@ const MapComponent = ({ torres = [], onTorreSelect, selectedTorre, filters, onFi
     });
   };
 
-  if (!mapLoaded) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <MapPin className="h-5 w-5" />
-            Mapa de Torres - Provincia del Chaco
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-96 bg-gray-100 rounded-lg flex items-center justify-center">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <p className="text-gray-600">Cargando mapa...</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
+  // Obtener ícono según tipo de convenio
+  const getMarkerIcon = (tipoConvenio) => {
+    const colors = {
+      'Policia': '#3b82f6',     // azul
+      'Ecom': '#ef4444',        // rojo  
+      'De tercero': '#eab308'   // amarillo
+    };
+    return createCustomIcon(colors[tipoConvenio] || '#6b7280');
+  };
+
+  // Centro del mapa en Chaco
+  const chacoCenter = [-26.3864, -60.7658];
+
+  const handleEditTorre = (torre, e) => {
+    e.stopPropagation();
+    // Aquí podrías llamar una función de edición si la necesitas
+    console.log('Editar torre:', torre.nombre);
+  };
 
   return (
     <div className="space-y-6">
