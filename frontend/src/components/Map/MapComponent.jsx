@@ -1,20 +1,41 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { MapPin, Search, Filter, RotateCcw } from 'lucide-react';
+import { MapPin, Search, Filter, RotateCcw, Edit } from 'lucide-react';
 
-// Simulamos el mapa con leaflet (en un entorno real incluiríamos la librería)
+// Configurar íconos de leaflet
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+});
+
+// Crear íconos personalizados para diferentes tipos de convenio
+const createCustomIcon = (color) => {
+  return L.divIcon({
+    className: 'custom-div-icon',
+    html: `<div style="
+      background-color: ${color}; 
+      width: 20px; 
+      height: 20px; 
+      border-radius: 50%; 
+      border: 3px solid white; 
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    "></div>`,
+    iconSize: [20, 20],
+    iconAnchor: [10, 10],
+  });
+};
+
 const MapComponent = ({ torres = [], onTorreSelect, selectedTorre, filters, onFiltersChange }) => {
   const mapRef = useRef(null);
-  const [mapLoaded, setMapLoaded] = useState(false);
-
-  useEffect(() => {
-    // Simular carga del mapa
-    const timer = setTimeout(() => setMapLoaded(true), 1000);
-    return () => clearTimeout(timer);
-  }, []);
+  const [mapLoaded, setMapLoaded] = useState(true);
 
   const getConvenioColor = (tipoConvenio) => {
     const colors = {
