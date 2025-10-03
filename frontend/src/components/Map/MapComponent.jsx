@@ -142,7 +142,7 @@ const MapComponent = ({ torres = [], onTorreSelect, selectedTorre, filters, onFi
         </CardContent>
       </Card>
 
-      {/* Mapa */}
+      {/* Mapa Real */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -151,73 +151,113 @@ const MapComponent = ({ torres = [], onTorreSelect, selectedTorre, filters, onFi
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-96 bg-gray-50 rounded-lg relative overflow-hidden border-2 border-dashed border-gray-300">
-            {/* Mapa simulado */}
-            <div className="absolute inset-0 bg-gradient-to-br from-green-100 to-blue-100">
-              {/* Título del mapa */}
-              <div className="absolute top-4 left-4 bg-white p-2 rounded shadow">
-                <h3 className="font-semibold text-sm">Chaco - Argentina</h3>
-              </div>
+          <div className="h-96 rounded-lg overflow-hidden border border-gray-300">
+            <MapContainer
+              center={chacoCenter}
+              zoom={7}
+              style={{ height: '100%', width: '100%' }}
+              ref={mapRef}
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                maxZoom={18}
+              />
               
-              {/* Marcadores simulados */}
-              {filteredTorres.map((torre, index) => {
-                const x = 20 + (index * 15) % 60;
-                const y = 20 + Math.floor(index / 4) * 20;
-                const color = getConvenioColor(torre.tipo_convenio);
+              {/* Marcadores de torres */}
+              {filteredTorres.map((torre) => {
+                if (!torre.latitud || !torre.longitud) return null;
                 
                 return (
-                  <div
-                    key={torre.id}
-                    className={`absolute w-4 h-4 rounded-full border-2 border-white shadow-lg cursor-pointer transform hover:scale-110 transition-transform ${
-                      selectedTorre?.id === torre.id ? 'ring-4 ring-blue-400' : ''
-                    }`}
-                    style={{ 
-                      left: `${x}%`, 
-                      top: `${y}%`,
-                      backgroundColor: color
-                    }}
-                    onClick={() => onTorreSelect(torre)}
-                    title={torre.nombre}
-                  />
+                  <React.Fragment key={torre.id}>
+                    <Marker
+                      position={[torre.latitud, torre.longitud]}
+                      icon={getMarkerIcon(torre.tipo_convenio)}
+                      eventHandlers={{
+                        click: () => onTorreSelect(torre)
+                      }}
+                    >
+                      <Popup>
+                        <div className="text-sm p-2 min-w-[200px]">
+                          <h3 className="font-bold text-base mb-2 text-center border-b pb-1">
+                            {torre.nombre}
+                          </h3>
+                          <div className="space-y-1">
+                            <p><strong>📍 Dirección:</strong> {torre.direccion}</p>
+                            <p><strong>🏗️ Tipo:</strong> {torre.tipo?.replace('_', ' ')}</p>
+                            <p><strong>📋 Convenio:</strong> {torre.tipo_convenio || 'N/A'}</p>
+                            <p><strong>📡 Alcance:</strong> {torre.alcance_km} km</p>
+                            <p><strong>🔴 Estado:</strong> 
+                              <span className={`ml-1 px-2 py-1 rounded text-xs ${
+                                torre.estado === 'operativa' ? 'bg-green-100 text-green-800' :
+                                torre.estado === 'mantenimiento' ? 'bg-yellow-100 text-yellow-800' :
+                                torre.estado === 'limitada' ? 'bg-orange-100 text-orange-800' :
+                                'bg-red-100 text-red-800'
+                              }`}>
+                                {torre.estado}
+                              </span>
+                            </p>
+                            {torre.frecuencia_mhz && (
+                              <p><strong>📻 Frecuencia:</strong> {torre.frecuencia_mhz} MHz</p>
+                            )}
+                          </div>
+                          <div className="mt-3 pt-2 border-t text-center">
+                            <button 
+                              onClick={(e) => handleEditTorre(torre, e)}
+                              className="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700 transition-colors flex items-center gap-1 mx-auto"
+                            >
+                              <Edit className="h-3 w-3" />
+                              Editar Torre
+                            </button>
+                          </div>
+                        </div>
+                      </Popup>
+                    </Marker>
+                    
+                    {/* Círculo de cobertura */}
+                    {torre.alcance_km && (
+                      <Circle
+                        center={[torre.latitud, torre.longitud]}
+                        radius={torre.alcance_km * 1000} // convertir km a metros
+                        pathOptions={{
+                          fillColor: getConvenioColor(torre.tipo_convenio),
+                          fillOpacity: 0.1,
+                          color: getConvenioColor(torre.tipo_convenio),
+                          weight: 1,
+                        }}
+                      />
+                    )}
+                  </React.Fragment>
                 );
               })}
-              
-              {/* Información si no hay torres */}
-              {filteredTorres.length === 0 && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center text-gray-500">
-                    <MapPin className="h-12 w-12 mx-auto mb-2 text-gray-300" />
-                    <p>No se encontraron torres con los filtros aplicados</p>
-                  </div>
-                </div>
-              )}
-            </div>
-            
-            {/* Controles del mapa */}
-            <div className="absolute bottom-4 left-4 bg-white p-2 rounded shadow">
-              <div className="text-xs text-gray-600">
-                Torres mostradas: {filteredTorres.length} de {torres.length}
-              </div>
-            </div>
+            </MapContainer>
           </div>
           
-          {/* Leyenda */}
-          <div className="mt-4 flex flex-wrap gap-4 text-sm">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-              <span>Policía</span>
+          {/* Información del mapa */}
+          <div className="mt-4 flex justify-between items-center">
+            {/* Leyenda */}
+            <div className="flex flex-wrap gap-4 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-blue-500 border border-white shadow"></div>
+                <span>Policía</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-red-500 border border-white shadow"></div>
+                <span>ECOM</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-yellow-500 border border-white shadow"></div>
+                <span>De Tercero</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-gray-400 border border-white shadow"></div>
+                <span>Otro/Sin Definir</span>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-red-500"></div>
-              <span>ECOM</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-              <span>De Tercero</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-gray-400"></div>
-              <span>Otro/Sin Definir</span>
+            
+            {/* Contador */}
+            <div className="text-sm text-gray-600 bg-white px-3 py-1 rounded shadow">
+              Torres mostradas: <span className="font-semibold">{filteredTorres.length}</span> de {torres.length}
             </div>
           </div>
         </CardContent>
